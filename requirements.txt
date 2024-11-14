@@ -1,0 +1,14 @@
+ctransformers
+transformers
+langchain
+langchain-community
+langchain_openai
+torch
+pypdf
+sentence-transformers
+gpt4all
+faiss-cpu
+openai
+tiktoken
+chardet
+django
