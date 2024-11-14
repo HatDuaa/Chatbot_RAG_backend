@@ -7,11 +7,10 @@ import os
 # from .models import api_key
 from .models import api_key
 
-APIKEY = api_key.objects.get(name='openAI').key
-
 
 def create_vector_db(file_path, vector_db_path):
     # Thiết lập biến môi trường
+    APIKEY = api_key.objects.get(name='openAI').key
     os.environ["OPENAI_API_KEY"] = APIKEY
 
     # Load data
@@ -28,7 +27,6 @@ def create_vector_db(file_path, vector_db_path):
     # Create vector store
     db = FAISS.from_documents(chunks, embedding_model)
     db.save_local(vector_db_path)
-    print('đã lưu vector db')
     return db
 
 

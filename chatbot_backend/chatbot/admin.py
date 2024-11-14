@@ -8,13 +8,13 @@ import os
 admin.site.register(api_key)
 
 
-@admin.action(description='Embed data')
+@admin.action(description='Embedding data')
 def my_custom_action(modeladmin, request, queryset):
     for obj in queryset:
         if obj.document:
             # Lấy đường dẫn thực tế của tệp
             file_path = obj.document.path
-            print(f"Địa chỉ tệp: {file_path}")
+            
             # Tạo đường dẫn lưu trữ vector DB trong thư mục app chatbot
             app_dir = os.path.dirname(os.path.abspath(__file__))
             vector_db_dir = os.path.join(app_dir, 'vectorstores', 'db_faiss_openai')
@@ -22,9 +22,16 @@ def my_custom_action(modeladmin, request, queryset):
             vector_db_path = os.path.join(vector_db_dir, f"{obj.name}")
 
             # Tạo vector DB
-            create_vector_db(file_path, vector_db_path) 
+            create_vector_db(file_path, vector_db_path)
+
+            # Lưu thông tin vào model VectorDB
+            VectorDB.objects.create(
+                name=obj.name,
+                vector_db_path=vector_db_path
+            )
+
         else:
-            print(f"Đối tượng {obj.name} không có tệp đính kèm.")
+            modeladmin.message_user(request, "{} does not have a document.".format(obj.name))
 
     modeladmin.message_user(request, "Embedding finished.")
 
@@ -34,3 +41,8 @@ class DocumentlAdmin(admin.ModelAdmin):
     actions = [my_custom_action]
 
 admin.site.register(Document, DocumentlAdmin)
+
+@admin.register(VectorDB)
+class VectorDBAdmin(admin.ModelAdmin):
+    list_display = ['name', 'vector_db_path', 'created_at']
+    readonly_fields = ('vector_db_path', 'created_at',)

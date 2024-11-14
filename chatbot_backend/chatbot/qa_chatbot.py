@@ -17,7 +17,7 @@ from getpass import getpass
 import os
 
 # os.environ["OPENAI_API_KEY"] = getpass()
-os.environ["OPENAI_API_KEY"] = api_key.objects.get(name='openAI').name
+
 
 
 
@@ -101,6 +101,9 @@ def delete_session_history(session_id: str):
 
 ### Tạo chatbot ###
 def chatbot_api(question, session_id):
+    if "OPENAI_API_KEY" not in os.environ:
+        os.environ["OPENAI_API_KEY"] = api_key.objects.get(name='openAI').key
+
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
     db = read_db()
     retriever = db.as_retriever(top_k=3)

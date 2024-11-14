@@ -29,3 +29,4 @@ def process_message(request):
         return JsonResponse({'response': response})
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
+    
